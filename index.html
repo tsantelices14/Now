@@ -17,9 +17,8 @@
             --accent-electric-blue: #00F0FF;
             --accent-dim: rgba(0, 240, 255, 0.15);
             --steel-grey: #27272A;
+            --card-bg: #141417;
             --alert-red: #FF2A2A;
-            
-            /* Typography */
             --font-main: 'Inter', sans-serif;
         }
 
@@ -35,72 +34,101 @@
             font-family: var(--font-main);
             display: flex;
             justify-content: center;
+            min-height: 100vh;
             -webkit-font-smoothing: antialiased;
         }
 
         .app-container {
             width: 100%;
-            max-width: 720px;
+            max-width: 480px;
             min-height: 100vh;
             background-color: var(--bg-deep-black);
             position: relative;
-            padding: 20px;
+            padding: 24px 20px;
             display: flex;
             flex-direction: column;
+            justify-content: center;
         }
 
-        /* Typography & Brand */
-        h1, h2, h3 {
-            text-transform: uppercase;
-            font-weight: 800;
-            letter-spacing: 1px;
+        .brand-header {
+            text-align: center;
+            margin-bottom: 32px;
         }
 
         .brand-title {
-            font-size: 2.2rem;
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: 2px;
             color: var(--txt-pure-white);
-            margin-bottom: 5px;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .brand-title span {
+            color: var(--accent-electric-blue);
         }
 
         .brand-subtitle {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 2px;
             color: var(--accent-electric-blue);
-            margin-bottom: 30px;
+            text-transform: uppercase;
         }
 
-        /* Form Inputs */
-        input, select, textarea {
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--steel-grey);
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #A1A1AA;
+            margin-bottom: 6px;
+        }
+
+        input {
             width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
+            padding: 14px 16px;
             background-color: var(--steel-grey);
             border: 1px solid transparent;
             color: var(--txt-pure-white);
             font-family: var(--font-main);
-            font-size: 1rem;
-            border-radius: 4px;
-            transition: border 0.2s ease;
+            font-size: 0.95rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
 
-        input:focus, select:focus {
+        input:focus {
             outline: none;
-            border: 1px solid var(--accent-electric-blue);
-            box-shadow: 0 0 8px var(--accent-dim);
+            border-color: var(--accent-electric-blue);
+            box-shadow: 0 0 10px var(--accent-dim);
         }
 
-        /* Buttons */
         button {
             width: 100%;
-            padding: 15px;
+            padding: 14px;
             font-family: var(--font-main);
-            font-weight: 600;
-            font-size: 1rem;
+            font-weight: 700;
+            font-size: 0.9rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
             cursor: pointer;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             transition: all 0.2s ease;
+            margin-top: 8px;
         }
 
         .btn-primary {
@@ -108,146 +136,120 @@
             color: var(--bg-deep-black);
         }
 
-        .btn-primary:active {
-            background-color: #00c4d1;
-            transform: scale(0.98);
+        .btn-primary:hover {
+            background-color: #33f3ff;
+            box-shadow: 0 0 15px var(--accent-dim);
         }
 
         .btn-secondary {
             background-color: transparent;
             border: 1px solid var(--steel-grey);
             color: var(--txt-pure-white);
+            margin-top: 12px;
         }
 
-        .btn-secondary:active {
+        .btn-secondary:hover {
             background-color: var(--steel-grey);
         }
 
-        /* Utilities */
-        .mt-20 { margin-top: 20px; }
-        .text-center { text-align: center; }
-        .error-text { color: var(--alert-red); font-size: 0.85rem; margin-top: -10px; margin-bottom: 10px; display: block; }
+        .notice-box {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid var(--accent-electric-blue);
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 0.8rem;
+            color: var(--txt-pure-white);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .error-text {
+            color: var(--alert-red);
+            font-size: 0.8rem;
+            margin-top: 8px;
+            display: block;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div id="app" class="app-container">
-        <!-- Vistas inyectadas por JavaScript -->
+        <!-- Renderizado dinámico -->
     </div>
 
     <script>
-        // ==========================================
-        // 1. DICCIONARIOS DE DATOS (X & T)
-        // ==========================================
-        const X = [
-            // Reemplaza o agrega los ejercicios aquí
-        ];
-
-        const T = {
-            "Login": ["Login", "Iniciar Sesión"],
-            "Sign Up": ["Sign Up", "Registrarse"],
-            "Workout": ["Workout", "Entrenamiento"],
-            "Save": ["Save", "Guardar"]
-        };
-
-        // ==========================================
-        // 2. CONFIGURACIÓN SUPABASE
-        // ==========================================
+        // Supabase Config
         const SUPABASE_URL = "YOUR_SUPABASE_URL_HERE";
         const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY_HERE";
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // ==========================================
-        // 3. ESTADO GLOBAL
-        // ==========================================
-        let S = {
-            lang: 1, // 0: EN, 1: ES
-            profile: {},
-            workouts: [],
-            bw: []
-        };
-
-        let currentUser = null;
-        const appContainer = document.getElementById('app');
-
-        function t(key) {
-            if (T[key]) return T[key][S.lang];
-            return key;
+        
+        let sb = null;
+        if (SUPABASE_URL !== "YOUR_SUPABASE_URL_HERE" && typeof supabase !== 'undefined') {
+            sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         }
 
-        function renderView(viewFunction) {
-            appContainer.innerHTML = '';
-            appContainer.appendChild(viewFunction());
-        }
+        const app = document.getElementById('app');
 
-        // ==========================================
-        // 4. VISTAS Y AUTENTICACIÓN
-        // ==========================================
-        function buildAuthView() {
-            const div = document.createElement('div');
-            div.className = 'mt-20';
-            div.innerHTML = `
-                <div class="text-center">
-                    <h1 class="brand-title">NOW</h1>
-                    <p class="brand-subtitle">PLANIFICA. EJECUTA. DOMINA.</p>
+        function renderAuthView() {
+            const isConfigured = sb !== null;
+            app.innerHTML = `
+                <div class="brand-header">
+                    <h1 class="brand-title">N<span>O</span>W</h1>
+                    <p class="brand-subtitle">Planifica. Ejecuta. Domina.</p>
                 </div>
-                <input type="email" id="email" placeholder="Correo electrónico" autocomplete="off">
-                <input type="password" id="password" placeholder="Contraseña">
-                <span id="auth-error" class="error-text"></span>
-                <button class="btn-primary" onclick="handleAuth('login')">${t('Login')}</button>
-                <button class="btn-secondary mt-20" onclick="handleAuth('signup')">${t('Sign Up')}</button>
+                
+                <div class="card">
+                    ${!isConfigured ? `
+                        <div class="notice-box">
+                            ⚡ <strong>Modo Vista Previa</strong><br>
+                            La nueva interfaz visual está activa. Para conectar tu base de datos, reemplaza <code>SUPABASE_URL</code> y <code>SUPABASE_ANON_KEY</code> en este archivo.
+                        </div>
+                    ` : ''}
+
+                    <div class="input-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" id="email" placeholder="atleta@now.com">
+                    </div>
+                    <div class="input-group">
+                        <label>Contraseña</label>
+                        <input type="password" id="password" placeholder="••••••••">
+                    </div>
+
+                    <span id="auth-error" class="error-text"></span>
+
+                    <button class="btn-primary" onclick="handleAuth('login')">Iniciar Sesión</button>
+                    <button class="btn-secondary" onclick="handleAuth('signup')">Registrarse</button>
+                </div>
             `;
-            return div;
         }
 
         async function handleAuth(type) {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const errorElem = document.getElementById('auth-error');
-            errorElem.innerText = '';
+            const errSpan = document.getElementById('auth-error');
+            errSpan.innerText = '';
+
+            if (!sb) {
+                errSpan.innerText = 'Por favor configura tus claves de Supabase en el archivo.';
+                return;
+            }
 
             if (!email || !password) {
-                errorElem.innerText = 'Por favor ingresa correo y contraseña.';
+                errSpan.innerText = 'Ingresa tu correo y contraseña.';
                 return;
             }
 
             try {
-                let res;
-                if (type === 'login') {
-                    res = await sb.auth.signInWithPassword({ email, password });
-                } else {
-                    res = await sb.auth.signUp({ email, password });
-                }
-
+                const res = type === 'login' 
+                    ? await sb.auth.signInWithPassword({ email, password })
+                    : await sb.auth.signUp({ email, password });
+                
                 if (res.error) throw res.error;
             } catch (err) {
-                errorElem.innerText = err.message;
+                errSpan.innerText = err.message;
             }
         }
 
-        // ==========================================
-        // 5. INICIALIZACIÓN
-        // ==========================================
-        async function initApp() {
-            const { data: { session } } = await sb.auth.getSession();
-            
-            if (session) {
-                currentUser = session.user;
-                console.log("Usuario autenticado:", currentUser);
-            } else {
-                renderView(buildAuthView);
-            }
-
-            sb.auth.onAuthStateChange((event, session) => {
-                if (event === 'SIGNED_IN') {
-                    currentUser = session.user;
-                } else if (event === 'SIGNED_OUT') {
-                    currentUser = null;
-                    renderView(buildAuthView);
-                }
-            });
-        }
-
-        document.addEventListener("DOMContentLoaded", initApp);
+        document.addEventListener('DOMContentLoaded', renderAuthView);
     </script>
 </body>
 </html>
