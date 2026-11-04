@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0A0A0C">
+    <title>NOW | PLANIFICA. EJECUTA. DOMINA.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            /* NOW Core Palette */
+            --bg-deep-black: #0A0A0C;
+            --txt-pure-white: #F4F4F5;
+            --accent-electric-blue: #00F0FF;
+            --accent-dim: rgba(0, 240, 255, 0.15);
+            --steel-grey: #27272A;
+            --alert-red: #FF2A2A;
+            
+            /* Typography */
+            --font-main: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-deep-black);
+            color: var(--txt-pure-white);
+            font-family: var(--font-main);
+            display: flex;
+            justify-content: center;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 720px;
+            min-height: 100vh;
+            background-color: var(--bg-deep-black);
+            position: relative;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Typography & Brand */
+        h1, h2, h3 {
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .brand-title {
+            font-size: 2.2rem;
+            color: var(--txt-pure-white);
+            margin-bottom: 5px;
+        }
+
+        .brand-subtitle {
+            font-size: 0.85rem;
+            color: var(--accent-electric-blue);
+            margin-bottom: 30px;
+        }
+
+        /* Form Inputs */
+        input, select, textarea {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: var(--steel-grey);
+            border: 1px solid transparent;
+            color: var(--txt-pure-white);
+            font-family: var(--font-main);
+            font-size: 1rem;
+            border-radius: 4px;
+            transition: border 0.2s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border: 1px solid var(--accent-electric-blue);
+            box-shadow: 0 0 8px var(--accent-dim);
+        }
+
+        /* Buttons */
+        button {
+            width: 100%;
+            padding: 15px;
+            font-family: var(--font-main);
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-electric-blue);
+            color: var(--bg-deep-black);
+        }
+
+        .btn-primary:active {
+            background-color: #00c4d1;
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--steel-grey);
+            color: var(--txt-pure-white);
+        }
+
+        .btn-secondary:active {
+            background-color: var(--steel-grey);
+        }
+
+        /* Utilities */
+        .mt-20 { margin-top: 20px; }
+        .text-center { text-align: center; }
+        .error-text { color: var(--alert-red); font-size: 0.85rem; margin-top: -10px; margin-bottom: 10px; display: block; }
+    </style>
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Vistas inyectadas por JavaScript -->
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. DICCIONARIOS DE DATOS (X & T)
+        // ==========================================
+        const X = [
+            // Reemplaza o agrega los ejercicios aquí
+        ];
+
+        const T = {
+            "Login": ["Login", "Iniciar Sesión"],
+            "Sign Up": ["Sign Up", "Registrarse"],
+            "Workout": ["Workout", "Entrenamiento"],
+            "Save": ["Save", "Guardar"]
+        };
+
+        // ==========================================
+        // 2. CONFIGURACIÓN SUPABASE
+        // ==========================================
+        const SUPABASE_URL = "YOUR_SUPABASE_URL_HERE";
+        const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY_HERE";
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ==========================================
+        // 3. ESTADO GLOBAL
+        // ==========================================
+        let S = {
+            lang: 1, // 0: EN, 1: ES
+            profile: {},
+            workouts: [],
+            bw: []
+        };
+
+        let currentUser = null;
+        const appContainer = document.getElementById('app');
+
+        function t(key) {
+            if (T[key]) return T[key][S.lang];
+            return key;
+        }
+
+        function renderView(viewFunction) {
+            appContainer.innerHTML = '';
+            appContainer.appendChild(viewFunction());
+        }
+
+        // ==========================================
+        // 4. VISTAS Y AUTENTICACIÓN
+        // ==========================================
+        function buildAuthView() {
+            const div = document.createElement('div');
+            div.className = 'mt-20';
+            div.innerHTML = `
+                <div class="text-center">
+                    <h1 class="brand-title">NOW</h1>
+                    <p class="brand-subtitle">PLANIFICA. EJECUTA. DOMINA.</p>
+                </div>
+                <input type="email" id="email" placeholder="Correo electrónico" autocomplete="off">
+                <input type="password" id="password" placeholder="Contraseña">
+                <span id="auth-error" class="error-text"></span>
+                <button class="btn-primary" onclick="handleAuth('login')">${t('Login')}</button>
+                <button class="btn-secondary mt-20" onclick="handleAuth('signup')">${t('Sign Up')}</button>
+            `;
+            return div;
+        }
+
+        async function handleAuth(type) {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorElem = document.getElementById('auth-error');
+            errorElem.innerText = '';
+
+            if (!email || !password) {
+                errorElem.innerText = 'Por favor ingresa correo y contraseña.';
+                return;
+            }
+
+            try {
+                let res;
+                if (type === 'login') {
+                    res = await sb.auth.signInWithPassword({ email, password });
+                } else {
+                    res = await sb.auth.signUp({ email, password });
+                }
+
+                if (res.error) throw res.error;
+            } catch (err) {
+                errorElem.innerText = err.message;
+            }
+        }
+
+        // ==========================================
+        // 5. INICIALIZACIÓN
+        // ==========================================
+        async function initApp() {
+            const { data: { session } } = await sb.auth.getSession();
+            
+            if (session) {
+                currentUser = session.user;
+                console.log("Usuario autenticado:", currentUser);
+            } else {
+                renderView(buildAuthView);
+            }
+
+            sb.auth.onAuthStateChange((event, session) => {
+                if (event === 'SIGNED_IN') {
+                    currentUser = session.user;
+                } else if (event === 'SIGNED_OUT') {
+                    currentUser = null;
+                    renderView(buildAuthView);
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", initApp);
+    </script>
+</body>
+</html>
